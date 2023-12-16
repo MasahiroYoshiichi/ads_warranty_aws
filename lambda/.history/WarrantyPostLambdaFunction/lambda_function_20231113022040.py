@@ -1,0 +1,61 @@
+import boto3
+import json
+import uuid
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('WarrantyTable')
+
+def lambda_handler(event, context):
+    body = json.loads(event['body'])
+    
+    transaction_id = str(uuid.uuid4())
+    product_number = f"{body['model']}-{body['serialNo']}"
+    userFullName = f"{body['userLastName']} {body['userFirstName']}"
+
+    try:
+        table.put_item(
+            Item={
+                'transactionID': transaction_id,
+                'productNumber': product_number,
+                'model': body['model'],
+                'serialNo': body['serialNo'],   
+                'subStoreName': body['subStoreName'],
+                'userLastName': body['userLastName'],
+                'userFirstName': body['userFirstName'],
+                'userFullName': userFullName,
+                'postalCode': body['postalCode'],
+                'prefecture': body['prefecture'],
+                'address': body['address'],
+                'phoneNumber': body['phoneNumber'],
+                'email': body['email'],
+                'purpose': body['purpose'],
+                'saleDate': body['saleDate'],
+                'warrantyEndDate': body['warrantyEndDate'],
+                'checklistItem1': body['checklistItem1'],
+                'checklistItem2': body['checklistItem2'],
+                'checklistItem3': body['checklistItem3'],
+                'checklistItem4': body['checklistItem4'],
+                'checklistItem5': body['checklistItem5'],
+                'checklistItem6': body['checklistItem6'],
+                'checklistItem7': body['checklistItem7'],
+                'checklistItem8': body['checklistItem8'],
+                'checklistItem9': body['checklistItem9'],
+                'checklistItem10': body['checklistItem10'],
+            }
+        )
+
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',  # S3ホスト後に変更
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                'Access-Control-Allow-Methods': 'POST,OPTIONS'
+            },
+            'body': json.dumps({'message': '登録完了しました', 'transactionID': transaction_id})
+        }
+    except Exception as e:
+        print('登録に失敗しました', e)
+        return {
+            'statusCode': 500,
+            'body': json.dumps('DynamoDBへの登録が失敗しました。')
+        }
