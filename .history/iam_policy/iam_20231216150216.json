@@ -1,0 +1,43 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:*",
+                "cloudfront:*",
+                "ses:*",
+                "apigateway:*",
+                "s3:*",
+                "lambda:*",
+                "dynamodb:*",
+                "amplify:*",
+                "CloudFormation:*",
+				"route53:*",
+				"route53domains:*",
+				"acm:*",
+                "secretsmanager:*",
+				"cloudwatch:*",
+				"codepipeline:*",
+				"codedeploy:*",
+				"codebuild:*",
+				"codecommit:*",
+				"events:*",
+				"codestar:*",
+				"codestar-connections:*",
+				"iam:List*",
+				"iam:Get*",
+				"iam:CreateRole",
+				"iam:PutRolePolicy",
+				"iam:AttachRolePolicy",
+				"iam:PassRole",
+				"iam:DeleteRole",
+				"iam:DeleteRolePolicy",
+				"iam:DetachRolePolicy",
+				"iam:DeletePolicyVersion"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

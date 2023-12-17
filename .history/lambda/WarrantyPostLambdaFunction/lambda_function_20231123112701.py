@@ -6,19 +6,14 @@ dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('WarrantyTable')
 
 def lambda_handler(event, context):
-    # イベント情報出力
     body = json.loads(event['body'])
     
-    # オブジェクト生成
     transaction_id = str(uuid.uuid4())
     product_number = f"{body['model']}-{body['serialNo']}"
     userFullName = f"{body['userLastName']} {body['userFirstName']}"
-    
-    # アクセス元情報を取得
     user_agent = event['headers'].get('User-Agent', '')
     ip_address = event['requestContext']['identity']['sourceIp']
-    
-    #DynamoDBへデータを格納
+
     try:
         table.put_item(
             Item={
@@ -61,7 +56,6 @@ def lambda_handler(event, context):
                 'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
                 'Access-Control-Allow-Methods': 'POST,OPTIONS'
             },
-            #　responceにパラメータを格納
             'body': json.dumps({'message': '登録完了しました', 'transactionID': transaction_id, 'productNumber': product_number})
         }
     except Exception as e:

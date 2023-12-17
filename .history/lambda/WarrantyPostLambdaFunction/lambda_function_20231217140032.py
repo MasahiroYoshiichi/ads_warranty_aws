@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     # アクセス元情報を取得
     user_agent = event['headers'].get('User-Agent', '')
     ip_address = event['requestContext']['identity']['sourceIp']
-    
+
     #DynamoDBへデータを格納
     try:
         table.put_item(
@@ -57,7 +57,7 @@ def lambda_handler(event, context):
         return {
             'statusCode': 200,
             'headers': {
-                'Access-Control-Allow-Origin': '*',  # S3ホスト後に変更
+                'Access-Control-Allow-Origin': 'https://tht-marine.wats-ads.com/', 
                 'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
                 'Access-Control-Allow-Methods': 'POST,OPTIONS'
             },

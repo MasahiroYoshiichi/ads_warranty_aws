@@ -6,9 +6,10 @@ from urllib.parse import urlparse, unquote
 
 # DynamoDBとS3クライアントの初期化
 dynamodb = boto3.client('dynamodb')
-s3 = boto3.client('s3')
+s3 = boto3.client(
+    's3'
+)
 
-# 署名付きURLの生成
 def generate_presigned_url(bucket_name, object_key):
     try:
         response = s3.generate_presigned_url('get_object',
@@ -22,15 +23,12 @@ def generate_presigned_url(bucket_name, object_key):
         return None
 
 def lambda_handler(event, context):
-    # イベント情報の出力
     print('jsonデータ:', json.dumps(event))
-    
     # クエリパラメーターの取得
     params = event.get('queryStringParameters', {})
     transaction_id = params.get('transactionID')
     product_number = params.get('productNumber')
-    
-    # パラメーターの値を確認
+
     if not transaction_id or not product_number:
         return {'statusCode': 400, 'body': json.dumps('TransactionIDとProductNumberの取得に失敗しました。')}
 
@@ -53,22 +51,21 @@ def lambda_handler(event, context):
 
         # URLからオブジェクトキーの抽出
         object_key = object_key = object_url.split('/')[-1]
+        
+        print(f"Object Key : {object_key}")
 
         # 署名付きURLの生成
         bucket_name = 'warranty-pdf-bucket'
         signed_url = generate_presigned_url(bucket_name, object_key)
-        
-        # 署名付きURLの有無
+        print(f"URK : {signed_url}")
+
         if signed_url:
             return {
                 'statusCode': 301,
                 'headers': {
-                    'Access-Control-Allow-Origin': '*', 
+                    'Access-Control-Allow-Origin': '*',  # 本番環境では適切なオリジンに変更してください
                     'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
                     'Access-Control-Allow-Methods': 'GET,OPTIONS',
-                    'Cache-Control': 'no-cache, no-store, must-revalidate', 
-                    'Pragma': 'no-cache',  
-                    'Expires': '0',  
                     'Location': signed_url
                 }
             }
